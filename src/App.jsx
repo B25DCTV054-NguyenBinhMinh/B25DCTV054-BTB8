@@ -3,6 +3,7 @@ import Clock from "./components/Clock";
 import StudentForm from "./components/StudentForm";
 import StudentList from "./components/StudentList";
 import StudentSearch from "./components/StudentSearch";
+import { useTheme } from "./context/ThemeContext";
 import useFetch from "./hooks/useFetch";
 
 const STUDENTS_URL = "https://6ad794a195e98f36aef2a97f.mockapi.io/students";
@@ -13,6 +14,7 @@ function App() {
   const [showClock, setShowClock] = useState(true);
   const [actionError, setActionError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   const handleAddStudent = async (student) => {
     setActionError(null);
@@ -66,56 +68,65 @@ function App() {
   );
 
   return (
-    <main className="app-shell">
-      <header className="app-header">
-        <div>
-          <h1>Quản lý sinh viên</h1>
-          <p className="subtitle">
-            Trang quản lý dánh sách sinh viên và điểm GPA.
-          </p>
-        </div>
-        <button
-          className="secondary-button"
-          type="button"
-          onClick={() => setShowClock((previousShowClock) => !previousShowClock)}
-        >
-          {showClock ? "Ẩn đồng hồ" : "Hiện đồng hồ"}
-        </button>
-      </header>
-
-      {showClock && <Clock />}
-
-      <section className="content-grid">
-        <StudentForm
-          onAddStudent={handleAddStudent}
-          isSubmitting={isSubmitting}
-        />
-        <section className="panel list-panel">
-          <div className="panel-heading">
-            <div>
-              <h2>Danh sách sinh viên</h2>
-            </div>
-            {!loading && !error && (
-              <span className="student-count">
-                {filteredStudents.length} sinh viên
-              </span>
-            )}
+    <div className={`app-container ${theme}`}>
+      <main className="app-shell">
+        <header className="app-header">
+          <div>
+            <h1>Quản lý sinh viên</h1>
+            <p className="subtitle">
+              Trang quản lý dánh sách sinh viên và điểm GPA.
+            </p>
           </div>
-          <StudentSearch value={searchTerm} onSearchChange={setSearchTerm} />
-          {loading && (
-            <p className="status-message">Đang tải danh sách sinh viên...</p>
-          )}
-          {error && <p className="error-message">{error}</p>}
-          {actionError && <p className="error-message">{actionError}</p>}
-          {!loading && !error && (
-            <StudentList
-              students={filteredStudents}
-              onDeleteStudent={handleDeleteStudent}
-            />
-          )}
+          <div className="header-actions">
+            <button
+              className="secondary-button"
+              type="button"
+              onClick={() => setShowClock((previousShowClock) => !previousShowClock)}
+            >
+              {showClock ? "Ẩn đồng hồ" : "Hiện đồng hồ"}
+            </button>
+            <button className="secondary-button" type="button" onClick={toggleTheme}>
+              {theme === "light"
+                ? "Chuyển sang Chế độ Không sáng"
+                : "Chuyển sang Chế độ Không tối"}
+            </button>
+          </div>
+        </header>
+
+        {showClock && <Clock />}
+
+        <section className="content-grid">
+          <StudentForm
+            onAddStudent={handleAddStudent}
+            isSubmitting={isSubmitting}
+          />
+          <section className="panel list-panel">
+            <div className="panel-heading">
+              <div>
+                <h2>Danh sách sinh viên</h2>
+              </div>
+              {!loading && !error && (
+                <span className="student-count">
+                  {filteredStudents.length} sinh viên
+                </span>
+              )}
+            </div>
+            <StudentSearch value={searchTerm} onSearchChange={setSearchTerm} />
+            {loading && (
+              <p className="status-message">Đang tải danh sách sinh viên...</p>
+            )}
+            {error && <p className="error-message">{error}</p>}
+            {actionError && <p className="error-message">{actionError}</p>}
+            {!loading && !error && (
+              <StudentList
+                students={filteredStudents}
+                onDeleteStudent={handleDeleteStudent}
+              />
+            )}
+          </section>
         </section>
-      </section>
-    </main>
+      </main>
+    </div>
   );
 }
 

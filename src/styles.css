@@ -15,6 +15,21 @@ body {
   min-width: 320px;
 }
 
+.app-container {
+  min-height: 100vh;
+  transition: background-color 0.25s, color 0.25s;
+}
+
+.app-container.light {
+  background: #f4f7fb;
+  color: #172033;
+}
+
+.app-container.dark {
+  background: #1e1e1e;
+  color: #f1f1f1;
+}
+
 button,
 input {
   font: inherit;
@@ -41,6 +56,13 @@ button {
 
 .app-header {
   margin-bottom: 28px;
+}
+
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
 }
 
 .eyebrow {
@@ -262,6 +284,54 @@ td {
   margin: 24px 0 4px;
   color: #5373d2;
   text-align: center;
+}
+
+.dark .subtitle {
+  color: #b7becb;
+}
+
+.dark .panel {
+  border-color: #3b414c;
+  background: #292929;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+}
+
+.dark label,
+.dark td {
+  color: #e4e7eb;
+}
+
+.dark input {
+  border-color: #555d6b;
+  background: #202124;
+  color: #f1f1f1;
+}
+
+.dark input::placeholder {
+  color: #9ca3af;
+}
+
+.dark .secondary-button {
+  background: #3b4d82;
+  color: #f1f1f1;
+}
+
+.dark .student-count {
+  background: #35446e;
+  color: #d7e0ff;
+}
+
+.dark th,
+.dark td {
+  border-bottom-color: #414752;
+}
+
+.dark th {
+  color: #aab3c2;
+}
+
+.dark .empty-state {
+  color: #b7becb;
 }
 
 @media (max-width: 760px) {
