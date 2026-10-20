@@ -1,95 +1,73 @@
-import React from "react";
+import { useState } from "react";
 import Clock from "./components/Clock";
 import StudentForm from "./components/StudentForm";
 import StudentList from "./components/StudentList";
 import StudentSearch from "./components/StudentSearch";
 
-class App extends React.Component {
-  state = {
-    students: [
-      { id: 1, name: "Lưu Thanh Lâm", gpa: 3.4 },
-      { id: 2, name: "Nguyễn Bình Minh", gpa: 3.4 },
-      { id: 3, name: "Ngô Thế Dương", gpa: 3.6 },
-    ],
-    searchTerm: "",
-    showClock: true,
+function App() {
+  const [students, setStudents] = useState([
+    { id: 1, name: "Lưu Thanh Lâm", gpa: 3.4 },
+    { id: 2, name: "Nguyễn Bình Minh", gpa: 3.4 },
+    { id: 3, name: "Ngô Thế Dương", gpa: 3.6 },
+  ]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showClock, setShowClock] = useState(true);
+
+  const handleAddStudent = (student) => {
+    setStudents((previousStudents) => [...previousStudents, student]);
   };
 
-  handleAddStudent = (student) => {
-    this.setState((prevState) => ({
-      students: [...prevState.students, student],
-    }));
-  };
-
-  handleDeleteStudent = (studentId) => {
-    this.setState((prevState) => ({
-      students: prevState.students.filter(
-        (student) => student.id !== studentId,
-      ),
-    }));
-  };
-
-  handleSearchChange = (searchTerm) => {
-    this.setState({ searchTerm });
-  };
-
-  toggleClock = () => {
-    this.setState((prevState) => ({
-      showClock: !prevState.showClock,
-    }));
-  };
-
-  render() {
-    const { students, searchTerm, showClock } = this.state;
-    const normalizedSearchTerm = searchTerm.trim().toLowerCase();
-    const filteredStudents = students.filter((student) =>
-      student.name.toLowerCase().includes(normalizedSearchTerm),
+  const handleDeleteStudent = (studentId) => {
+    setStudents((previousStudents) =>
+      previousStudents.filter((student) => student.id !== studentId),
     );
+  };
 
-    return (
-      <main className="app-shell">
-        <header className="app-header">
-          <div>
-            <h1>Quản lý sinh viên</h1>
-            <p className="subtitle">
-              Trang quản lý dánh sách sinh viên và điểm GPA.
-            </p>
-          </div>
-          <button
-            className="secondary-button"
-            type="button"
-            onClick={this.toggleClock}
-          >
-            {showClock ? "Ẩn đồng hồ" : "Hiện đồng hồ"}
-          </button>
-        </header>
+  const normalizedSearchTerm = searchTerm.trim().toLowerCase();
+  const filteredStudents = students.filter((student) =>
+    student.name.toLowerCase().includes(normalizedSearchTerm),
+  );
 
-        {showClock && <Clock />}
+  return (
+    <main className="app-shell">
+      <header className="app-header">
+        <div>
+          <h1>Quản lý sinh viên</h1>
+          <p className="subtitle">
+            Trang quản lý dánh sách sinh viên và điểm GPA.
+          </p>
+        </div>
+        <button
+          className="secondary-button"
+          type="button"
+          onClick={() => setShowClock((previousShowClock) => !previousShowClock)}
+        >
+          {showClock ? "Ẩn đồng hồ" : "Hiện đồng hồ"}
+        </button>
+      </header>
 
-        <section className="content-grid">
-          <StudentForm onAddStudent={this.handleAddStudent} />
-          <section className="panel list-panel">
-            <div className="panel-heading">
-              <div>
-                <h2>Danh sách sinh viên</h2>
-              </div>
-              <span className="student-count">
-                {filteredStudents.length} sinh viên
-              </span>
+      {showClock && <Clock />}
+
+      <section className="content-grid">
+        <StudentForm onAddStudent={handleAddStudent} />
+        <section className="panel list-panel">
+          <div className="panel-heading">
+            <div>
+              <h2>Danh sách sinh viên</h2>
             </div>
-            <StudentSearch
-              value={searchTerm}
-              onSearchChange={this.handleSearchChange}
-            />
-            <StudentList
-              students={filteredStudents}
-              onDeleteStudent={this.handleDeleteStudent}
-            />
-          </section>
+            <span className="student-count">
+              {filteredStudents.length} sinh viên
+            </span>
+          </div>
+          <StudentSearch value={searchTerm} onSearchChange={setSearchTerm} />
+          <StudentList
+            students={filteredStudents}
+            onDeleteStudent={handleDeleteStudent}
+          />
         </section>
-      </main>
-    );
-  }
+      </section>
+    </main>
+  );
 }
 
 export default App;

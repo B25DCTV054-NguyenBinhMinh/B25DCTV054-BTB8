@@ -1,56 +1,47 @@
-import React from "react";
+import { useEffect, useState } from "react";
 
-class Clock extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      time: new Date(),
-      clickCount: 0,
-    };
-    console.log("Clock constructor");
-  }
+function Clock() {
+  const [time, setTime] = useState(new Date());
+  const [clickCount, setClickCount] = useState(0);
 
-  componentDidMount() {
-    console.log("Clock componentDidMount");
-    this.timerId = window.setInterval(() => {
-      this.setState({ time: new Date() });
+  useEffect(() => {
+    console.log("Clock timer effect mounted");
+    const timerId = window.setInterval(() => {
+      setTime(new Date());
     }, 1000);
-  }
 
-  componentDidUpdate(prevProps, prevState) {
-    console.log("Clock componentDidUpdate");
-    if (prevState.clickCount !== this.state.clickCount) {
-      document.title = `Bấm ${this.state.clickCount} lần`;
-    }
-  }
+    return () => {
+      console.log("Clock timer effect cleanup");
+      window.clearInterval(timerId);
+    };
+  }, []);
 
-  componentWillUnmount() {
-    console.log("Clock componentWillUnmount");
-    window.clearInterval(this.timerId);
-  }
+  useEffect(() => {
+    console.log("Clock clickCount effect", clickCount);
+    document.title = `Bấm ${clickCount} lần`;
 
-  handleClick = () => {
-    this.setState((prevState) => ({
-      clickCount: prevState.clickCount + 1,
-    }));
-  };
+    return () => {
+      console.log("Clock clickCount effect cleanup", clickCount);
+    };
+  }, [clickCount]);
 
-  render() {
-    console.log("Clock render");
-    const { time, clickCount } = this.state;
+  console.log("Clock render");
 
-    return (
-      <section className="clock-card" aria-label="Đồng hồ">
-        <div>
-          <p className="eyebrow">Live clock</p>
-          <p className="clock-time">{time.toLocaleTimeString("vi-VN")}</p>
-        </div>
-        <button className="primary-button" type="button" onClick={this.handleClick}>
-          Bấm {clickCount} lần
-        </button>
-      </section>
-    );
-  }
+  return (
+    <section className="clock-card" aria-label="Đồng hồ">
+      <div>
+        <p className="eyebrow">Live clock</p>
+        <p className="clock-time">{time.toLocaleTimeString("vi-VN")}</p>
+      </div>
+      <button
+        className="primary-button"
+        type="button"
+        onClick={() => setClickCount((previousClickCount) => previousClickCount + 1)}
+      >
+        Bấm {clickCount} lần
+      </button>
+    </section>
+  );
 }
 
 export default Clock;
