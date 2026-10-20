@@ -1,4 +1,5 @@
 import React from "react";
+import Clock from "./components/Clock";
 import StudentForm from "./components/StudentForm";
 import StudentList from "./components/StudentList";
 import StudentSearch from "./components/StudentSearch";
@@ -11,6 +12,7 @@ class App extends React.Component {
       { id: 3, name: "Ngô Thế Dương", gpa: 3.6 },
     ],
     searchTerm: "",
+    showClock: true,
   };
 
   handleAddStudent = (student) => {
@@ -31,8 +33,14 @@ class App extends React.Component {
     this.setState({ searchTerm });
   };
 
+  toggleClock = () => {
+    this.setState((prevState) => ({
+      showClock: !prevState.showClock,
+    }));
+  };
+
   render() {
-    const { students, searchTerm } = this.state;
+    const { students, searchTerm, showClock } = this.state;
     const normalizedSearchTerm = searchTerm.trim().toLowerCase();
     const filteredStudents = students.filter((student) =>
       student.name.toLowerCase().includes(normalizedSearchTerm),
@@ -47,7 +55,16 @@ class App extends React.Component {
               Trang quản lý dánh sách sinh viên và điểm GPA.
             </p>
           </div>
+          <button
+            className="secondary-button"
+            type="button"
+            onClick={this.toggleClock}
+          >
+            {showClock ? "Ẩn đồng hồ" : "Hiện đồng hồ"}
+          </button>
         </header>
+
+        {showClock && <Clock />}
 
         <section className="content-grid">
           <StudentForm onAddStudent={this.handleAddStudent} />

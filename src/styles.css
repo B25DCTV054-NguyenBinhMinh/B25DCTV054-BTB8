@@ -31,7 +31,8 @@ button {
 }
 
 .app-header,
-.panel-heading {
+.panel-heading,
+.clock-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -79,6 +80,25 @@ h2 {
   border-radius: 18px;
   background: #fff;
   box-shadow: 0 12px 32px rgba(43, 63, 100, 0.06);
+}
+
+.clock-card {
+  margin-bottom: 24px;
+  padding: 20px 24px;
+  border: 1px solid #172033;
+  border-radius: 18px;
+  background: #172033;
+  color: #fff;
+}
+
+.clock-card .eyebrow {
+  color: #aabcfb;
+}
+
+.clock-time {
+  margin: 0;
+  font-size: 1.6rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .content-grid {
@@ -238,7 +258,8 @@ td {
     padding-top: 28px;
   }
 
-  .app-header {
+  .app-header,
+  .clock-card {
     align-items: flex-start;
     flex-direction: column;
   }
