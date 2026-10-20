@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function StudentForm({ onAddStudent }) {
+function StudentForm({ onAddStudent, isSubmitting }) {
   const [name, setName] = useState("");
   const [gpa, setGpa] = useState("");
   const [errors, setErrors] = useState({ name: "", gpa: "" });
@@ -94,8 +94,12 @@ function StudentForm({ onAddStudent }) {
             </p>
           )}
         </div>
-        <button className="primary-button full-width" type="submit">
-          Thêm sinh viên
+        <button
+          className="primary-button full-width"
+          type="submit"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? "Đang thêm..." : "Thêm sinh viên"}
         </button>
       </form>
     </section>

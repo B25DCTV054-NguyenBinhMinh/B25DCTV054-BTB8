@@ -28,7 +28,9 @@ function StudentList({ students, onDeleteStudent }) {
             <tr key={student.id}>
               <td>{student.name}</td>
               <td>
-                <span className="gpa-badge">{student.gpa.toFixed(2)}</span>
+                <span className="gpa-badge">
+                  {Number(student.gpa).toFixed(2)}
+                </span>
               </td>
               <td className="action-cell">
                 <button

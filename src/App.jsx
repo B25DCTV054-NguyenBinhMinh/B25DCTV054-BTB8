@@ -3,27 +3,64 @@ import Clock from "./components/Clock";
 import StudentForm from "./components/StudentForm";
 import StudentList from "./components/StudentList";
 import StudentSearch from "./components/StudentSearch";
+import useFetch from "./hooks/useFetch";
+
+const STUDENTS_URL = "https://6ad794a195e98f36aef2a97f.mockapi.io/students";
 
 function App() {
-  const [students, setStudents] = useState([
-    { id: 1, name: "Lưu Thanh Lâm", gpa: 3.4 },
-    { id: 2, name: "Nguyễn Bình Minh", gpa: 3.4 },
-    { id: 3, name: "Ngô Thế Dương", gpa: 3.6 },
-  ]);
+  const { data, loading, error, refetch } = useFetch(STUDENTS_URL);
   const [searchTerm, setSearchTerm] = useState("");
   const [showClock, setShowClock] = useState(true);
+  const [actionError, setActionError] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleAddStudent = (student) => {
-    setStudents((previousStudents) => [...previousStudents, student]);
+  const handleAddStudent = async (student) => {
+    setActionError(null);
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(STUDENTS_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(student),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Không thể thêm sinh viên (HTTP ${response.status}).`);
+      }
+
+      await refetch();
+    } catch (requestError) {
+      setActionError(
+        requestError.message || "Đã xảy ra lỗi khi thêm sinh viên.",
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const handleDeleteStudent = (studentId) => {
-    setStudents((previousStudents) =>
-      previousStudents.filter((student) => student.id !== studentId),
-    );
+  const handleDeleteStudent = async (studentId) => {
+    setActionError(null);
+
+    try {
+      const response = await fetch(`${STUDENTS_URL}/${studentId}`, {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        throw new Error(`Không thể xóa sinh viên (HTTP ${response.status}).`);
+      }
+
+      await refetch();
+    } catch (requestError) {
+      setActionError(
+        requestError.message || "Đã xảy ra lỗi khi xóa sinh viên.",
+      );
+    }
   };
 
   const normalizedSearchTerm = searchTerm.trim().toLowerCase();
+  const students = Array.isArray(data) ? data : [];
   const filteredStudents = students.filter((student) =>
     student.name.toLowerCase().includes(normalizedSearchTerm),
   );
@@ -49,21 +86,33 @@ function App() {
       {showClock && <Clock />}
 
       <section className="content-grid">
-        <StudentForm onAddStudent={handleAddStudent} />
+        <StudentForm
+          onAddStudent={handleAddStudent}
+          isSubmitting={isSubmitting}
+        />
         <section className="panel list-panel">
           <div className="panel-heading">
             <div>
               <h2>Danh sách sinh viên</h2>
             </div>
-            <span className="student-count">
-              {filteredStudents.length} sinh viên
-            </span>
+            {!loading && !error && (
+              <span className="student-count">
+                {filteredStudents.length} sinh viên
+              </span>
+            )}
           </div>
           <StudentSearch value={searchTerm} onSearchChange={setSearchTerm} />
-          <StudentList
-            students={filteredStudents}
-            onDeleteStudent={handleDeleteStudent}
-          />
+          {loading && (
+            <p className="status-message">Đang tải danh sách sinh viên...</p>
+          )}
+          {error && <p className="error-message">{error}</p>}
+          {actionError && <p className="error-message">{actionError}</p>}
+          {!loading && !error && (
+            <StudentList
+              students={filteredStudents}
+              onDeleteStudent={handleDeleteStudent}
+            />
+          )}
         </section>
       </section>
     </main>
